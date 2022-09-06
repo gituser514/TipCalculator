@@ -7,6 +7,20 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
+    <Button
+            android:text="+"
+            android:layout_width="48dp"
+            android:layout_height="48dp" android:id="@+id/percentUpButton"
+            app:layout_constraintStart_toEndOf="@+id/percentDownButton"
+            app:layout_constraintBottom_toBottomOf="@+id/percentDownButton"
+            app:layout_constraintTop_toTopOf="@+id/percentDownButton"/>
+    <Button
+            android:text="-"
+            android:layout_width="48dp"
+            android:layout_height="48dp" android:id="@+id/percentDownButton"
+            app:layout_constraintBottom_toBottomOf="@+id/percentageInput"
+            app:layout_constraintStart_toEndOf="@+id/percentageInput"
+            app:layout_constraintTop_toTopOf="@+id/percentageInput"/>
     <TextView
             android:text="@string/bill_amount_label"
             android:layout_width="wrap_content"
@@ -71,7 +85,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/percentLabel"
             app:layout_constraintTop_toBottomOf="@+id/billAmountInput"
             tools:ignore="SpeakableTextPresentCheck"
-            />
+    />
 
     <TextView
             android:layout_width="wrap_content"

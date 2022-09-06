@@ -3,19 +3,31 @@ package com.example.tipcalculator;
 import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Toast;
 
 import java.text.NumberFormat;
 
-public class MainActivity extends Activity implements TextView.OnEditorActionListener {
+public abstract class MainActivity extends Activity implements TextView.OnEditorActionListener, OnClickListener {
     // define the instance variables for the widgets that the class needs to work with
     private EditText billAmountEditText;
     private EditText percentageEditText;
     private TextView tipTextView;
     private TextView totalTextView;
+
+    // "Field can be converted to a local variable" suggestion to this line:
+    // private Button percentUpButton;
+
+
+    // "Field can be converted to a local variable" suggestion to this line:
+    // private Button percentDownButton;
+
 
     private SharedPreferences savedValues;
     private float billAmount = 0.0f;
@@ -28,15 +40,26 @@ public class MainActivity extends Activity implements TextView.OnEditorActionLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         billAmountEditText = (EditText) findViewById(R.id.billAmountInput);
-        percentageEditText = findViewById(R.id.percentageInput);
+        percentageEditText = (EditText) findViewById(R.id.percentageInput);
+
+        Button percentUpButton = (Button) findViewById(R.id.percentUpButton);
+        Button percentDownButton = (Button) findViewById(R.id.percentDownButton);
+
         tipTextView = findViewById(R.id.tipInput);
         totalTextView = findViewById(R.id.totalInput);
 
         //After getting references to the widgets, this code sets the listeners.
         // First, it sets the current class as the listener for the EditorAction
         // event on the editable text view for the bill amount.
+
+        billAmountEditText.setOnEditorActionListener(this);
         percentageEditText.setOnEditorActionListener(this);
+
+        percentUpButton.setOnClickListener(this);
+        percentDownButton.setOnClickListener(this);
+
         savedValues = getPreferences(MODE_PRIVATE);
 
     }
@@ -64,7 +87,8 @@ public class MainActivity extends Activity implements TextView.OnEditorActionLis
         billAmount = savedValues.getFloat("billAmount", 0.0f);
         tipPercent = savedValues.getFloat("tipPercent", 15f);
         billAmountEditText.setText(String.valueOf(billAmount));
-        tipTextView.setText(String.valueOf(tipPercent));
+        percentageEditText.setText(String.valueOf(tipPercent));
+        //tipTextView.setText(String.valueOf(tipPercent));
         calculateAndDisplay();
     }
 
@@ -76,7 +100,8 @@ public class MainActivity extends Activity implements TextView.OnEditorActionLis
     // widgets.
     private void calculateAndDisplay() {
         billAmount = Float.parseFloat(billAmountEditText.getText().toString());
-        tipPercent = Float.parseFloat(tipTextView.getText().toString());
+       // tipPercent = Float.parseFloat(tipTextView.getText().toString());
+        tipPercent = Float.parseFloat((percentageEditText.getText().toString()));
         float tipAmount = billAmount * (tipPercent / 100);
         float totalAmount = billAmount + tipAmount;
 
@@ -90,10 +115,36 @@ public class MainActivity extends Activity implements TextView.OnEditorActionLis
     // calculateAndDisplay method to perform the calculation and display the results
     // on the user interface.
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+    {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
             calculateAndDisplay();
         }
         return false;
+    }
+
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.percentDownButton:
+                tipPercent = tipPercent - 1f;
+                percentageEditText.setText(String.valueOf(tipPercent));
+                Toast.makeText(this, "in percentDownButton switch case",
+                        Toast.LENGTH_SHORT).show();
+                calculateAndDisplay();
+                break;
+
+            case R.id.percentUpButton:
+                tipPercent = tipPercent + 1f;
+                percentageEditText.setText(String.valueOf(tipPercent));
+                Toast.makeText(this, "in percentUpButton switch case",
+                        Toast.LENGTH_SHORT).show();
+                calculateAndDisplay();
+                break;
+        }
+
     }
 }
